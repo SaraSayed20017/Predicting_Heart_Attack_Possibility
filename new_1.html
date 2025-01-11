@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Attack Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            text-align: center;
+        }
+        .prediction-images {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .prediction-images img {
+            width: 120px;
+            height: 120px;
+            margin: 0 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Heart Attack Prediction</h1>
+        <form id="predictionForm">
+            <div class="input-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" placeholder="e.g. 45" required>
+            </div>
+            <div class="input-group">
+                <label for="sex">Sex (0=Female, 1=Male):</label>
+                <input type="number" id="sex" placeholder="e.g. 1" required>
+            </div>
+            <div class="input-group">
+                <label for="cp">Chest Pain Type (0-3):</label>
+                <input type="number" id="cp" placeholder="e.g. 1" required>
+            </div>
+            <div class="input-group">
+                <label for="trestbps">Resting Blood Pressure:</label>
+                <input type="number" id="trestbps" placeholder="e.g. 130" required>
+            </div>
+            <div class="input-group">
+                <label for="chol">Serum Cholestoral:</label>
+                <input type="number" id="chol" placeholder="e.g. 250" required>
+            </div>
+            <div class="input-group">
+                <label for="fbs">Fasting Blood Sugar (0=No, 1=Yes):</label>
+                <input type="number" id="fbs" placeholder="e.g. 0" required>
+            </div>
+            <div class="input-group">
+                <label for="restecg">Resting Electrocardiographic Results (0-2):</label>
+                <input type="number" id="restecg" placeholder="e.g. 1" required>
+            </div>
+            <div class="input-group">
+                <label for="thalach">Maximum Heart Rate Achieved:</label>
+                <input type="number" id="thalach" placeholder="e.g. 150" required>
+            </div>
+            <div class="input-group">
+                <label for="exang">Exercise Induced Angina (0=No, 1=Yes):</label>
+                <input type="number" id="exang" placeholder="e.g. 1" required>
+            </div>
+            <div class="input-group">
+                <label for="oldpeak">Oldpeak Depression:</label>
+                <input type="number" id="oldpeak" placeholder="e.g. 1.5" required>
+            </div>
+            <div class="input-group">
+                <label for="slope">Slope of Peak Exercise ST Segment (0-2):</label>
+                <input type="number" id="slope" placeholder="e.g. 1" required>
+            </div>
+            <div class="input-group">
+                <label for="ca">Number of Major Vessels (0-4):</label>
+                <input type="number" id="ca" placeholder="e.g. 2" required>
+            </div>
+            <div class="input-group">
+                <label for="thal">Thalassemia (0-3):</label>
+                <input type="number" id="thal" placeholder="e.g. 3" required>
+            </div>
+
+            <button type="button" onclick="makePrediction()">Predict</button>
+        </form>
+
+        <div id="result"></div>
+
+        <div class="prediction-images" id="predictionImages"></div>
+    </div>
+
+    <script>
+        function makePrediction() {
+            const data = {
+                age: document.getElementById('age').value,
+                sex: document.getElementById('sex').value,
+                cp: document.getElementById('cp').value,
+                trestbps: document.getElementById('trestbps').value,
+                chol: document.getElementById('chol').value,
+                fbs: document.getElementById('fbs').value,
+                restecg: document.getElementById('restecg').value,
+                thalach: document.getElementById('thalach').value,
+                exang: document.getElementById('exang').value,
+                oldpeak: document.getElementById('oldpeak').value,
+                slope: document.getElementById('slope').value,
+                ca: document.getElementById('ca').value,
+                thal: document.getElementById('thal').value
+            };
+
+            fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const prediction = data.prediction === 1 ? "High Risk" : "Low Risk";
+                document.getElementById('result').innerText = `Prediction: ${prediction}`;
+                
+               
+            })
+            .catch(error => {
+                document.getElementById('result').innerText = 'Error: ' + error;
+            });
+        }
+    </script>
+</body>
+</html>
